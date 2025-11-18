@@ -1,0 +1,35 @@
+name: Quality Check
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint con flake8
+        run: |
+          flake8 app test
+
+      - name: Chequeo de formato con black (modo check)
+        run: |
+          black --check app test
+
+      - name: Ejecutar tests
+        run: |
+          python -m pytest
